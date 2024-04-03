@@ -20,7 +20,7 @@ def desenhar_grafo(G):
 
 def main():
     parser = argparse.ArgumentParser(description='Visualizador de circuito')
-    parser.add_argument('-circ', '-c', metavar='circuito.txt', required=True, help='Arquivo contendo informações do circuito')
+    parser.add_argument('-circ', '-c', metavar='"[caminho/arquivo.txt]"', required=True, help='Arquivo contendo informações do circuito')
     args = parser.parse_args()
 
     G = criar_grafo(args.circ)

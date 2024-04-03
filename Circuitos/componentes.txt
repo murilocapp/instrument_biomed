@@ -1,3 +1,4 @@
-Vinput input 0 dc 0 external
-R1 input output 10kOhm
-R2 output 0 10kOhm
+Vinput 1 0 dc 0 external
+R1 1 2 10kOhm
+R2 2 0 10kOhm
+C2 3 0 10mF
