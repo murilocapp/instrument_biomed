@@ -5,3 +5,5 @@ numpy>=1.18
 ply>=3.11
 scipy>=1.4
 networkx
+igraph
+pycairo

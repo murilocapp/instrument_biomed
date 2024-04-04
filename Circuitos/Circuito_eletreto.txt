@@ -1,0 +1,17 @@
+.title circuito_eletreto
+.include uA741.lib
+Vin_Ard ArdVIn 0 5
+R1_divTen ArdVIn n1 1000.0
+R2_divTen n1 0 1000.0
+X.AmpOp_Seg_GNDv n1 GNDv ArdVIn 0 GNDv uA741
+Cmic McOut GNDv 1e-09
+R1_mic ArdVIn McOut 1000.0
+C1_passaAlta McOut n2 1e-06
+R1_passaAlta n2 GNDv 1000.0
+X.AmpOp_Seg_PreAmp n2 n3 ArdVIn 0 n3 uA741
+R1_passaBaixa n3 n4 1000.0
+C1_passaBaixa n4 GNDv 1e-06
+X.AmpOp_Amp n4 n5 ArdVIn 0 ArdRecp uA741
+Rb_amp n5 GNDv 1000.0
+Rf_amp n5 ArdRecp 2000.0
+X.Arduino ArdVIn ArdRecp 0 
