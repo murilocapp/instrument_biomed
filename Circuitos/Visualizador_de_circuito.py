@@ -4,24 +4,22 @@ import matplotlib.pyplot as plt
 import PIL
 from os import path
 
+def create_icons() -> dict[str, str]:
+    icons = {
+        'AmpOp': path.join('icons', 'AmpOp.png'),
+        'R' : path.join('icons', 'Resistencia.png'),
+        'L' : path.join('icons', 'Indutor.png'),
+        'C' : path.join('icons', 'Capacitor.png'),
+        'V' : path.join('icons', 'FonteTensao.png'),
+        'Arduino': path.join('icons', 'Arduino.png'),
+    }
 
-def create_icons()-> dict[str,str]:
-        icons = {
-            'AmpOp': path('icons', 'AmpOp.png'),
-            'R' : path('icons', 'Resistencia.png'),
-            'L' : path('icons', 'Indutor.png'),
-            'C' : path('icons', 'Capacitor.png'),
-            'V' : path('icons', 'FonteTensao.png'),
-            'Arduino': path('icons', 'Arduino.png'),
-        }
+    images = {k: PIL.Image.open(fname) for k, fname in icons.items()}
 
-        images = {k: PIL.Image.open(fname) for k, fname in icons.items()}
-
-        return images
-
+    return images
 
 class Grafo(nx.Graph):
-    def __init__(self,arquivo):
+    def __init__(self, arquivo):
         self.G = nx.Graph()
         self.arquivo = arquivo
     
@@ -33,17 +31,17 @@ class Grafo(nx.Graph):
                     self.extra.append(linha)
                 else:
                     componente, *nos, valor = linha.split()
-                    if(componente.startswith("X")):
+                    if componente.startswith("X"):
                         _componente = componente.split('.')[1]
                         self.G.add_node(_componente)
                         for n in nos[:-1]:
                             self.G.add_node(n)
                             self.G.add_edge(n, _componente)
                         self.G.add_node(nos[-1])
-                        self.G.add_edge(_componente,nos[-1])
+                        self.G.add_edge(_componente, nos[-1])
                     else:
                         self.G.add_node(componente)
-                        nIn, nOut = nos[0], nos[-1]  # Usar os primeiros e últimos nós da lista de nós
+                        nIn, nOut = nos[0], nos[-1]  
                         self.G.add_edge(nIn, componente)
                         self.G.add_edge(componente, nOut)
                 
@@ -58,28 +56,26 @@ class Grafo(nx.Graph):
                     extra.append(linha)
                 else:
                     componente, *nos, valor = linha.split()
-                    if(componente.startswith("X")):
+                    if componente.startswith("X"):
                         _componente = componente.split('.')[1]
-                        self.G.add_node(_componente, image = icons[_componente.split(sep="_")[0]], label = valor)
+                        self.G.add_node(_componente, image=icons[_componente.split(sep="_")[0]], label=valor)
                         for n in nos[:-1]:  
                             self.G.add_edge(n, _componente)
                         self.G.add_edge(_componente, nos[-1])
                     else:
-                        self.G.add_node(componente, image = icons[componente[0]],label = valor)
+                        self.G.add_node(componente, image=icons.get(componente[0]), label=valor)
                         nIn, nOut = nos[0], nos[-1]  
                         self.G.add_edge(nIn, componente)
                         self.G.add_edge(componente, nOut)
         self.extra = extra
         return self.G
 
-
-
 class Draw:
     def __init__(self):
         pass
     
-    @staticmethod  # Decorador para tornar a função estática (não precisa instanciar a classe)
-    def desenhar_grafo(G:nx.Graph):
+    @staticmethod
+    def desenhar_grafo(G: nx.Graph):
         pos = nx.spring_layout(G, seed=1734289230)
         fig, ax = plt.subplots()
 
@@ -107,17 +103,14 @@ class Draw:
 
         # Add the respective image to each node
         for n in G.nodes:
-            xf, yf = tr_figure(pos[n])
-            xa, ya = tr_axes((xf, yf))
-            # get overlapped axes and plot icon
-            a = plt.axes([xa - icon_center, ya - icon_center, icon_size, icon_size])
-            a.imshow(G.nodes[n]["image"])
-            a.axis("off")
+            if "image" in G.nodes[n]:
+                xf, yf = tr_figure(pos[n])
+                xa, ya = tr_axes((xf, yf))
+                # get overlapped axes and plot icon
+                a = plt.axes([xa - icon_center, ya - icon_center, icon_size, icon_size])
+                a.imshow(G.nodes[n]["image"])
+                a.axis("off")
         plt.show()
-
-
-
-#-----------------------------------------------------------------------------------------------------------
 
 @staticmethod
 def main():
@@ -126,8 +119,9 @@ def main():
     args = parser.parse_args()
 
     G = Grafo(args.circ)
-    G.criar_grafo_simples()
+    G = G.criar_grafo_complexo()
     Draw.desenhar_grafo(G)
+
 
 if __name__ == "__main__":
     main()
